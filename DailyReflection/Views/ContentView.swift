@@ -9,8 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @Query(sort: \Reflection.date, order: .reverse)
+    private var reflections: [Reflection]
     
-    @Query private var reflections: [Reflection]
     @Environment(\.modelContext) private var context
     
     var body: some View {
