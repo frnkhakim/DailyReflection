@@ -6,14 +6,23 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
+    
+    @Query private var reflections: [Reflection]
+    @Environment(\.modelContext) private var context
+    
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            Text("Saved entries: \(reflections.count)")
+                .font(.title)
+            
+            Button("Add test entry"){
+                let entry = Reflection(wentWell: "Started app 15")
+                context.insert(entry)
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
     }
@@ -21,4 +30,8 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        // Previews don't run your App struct, so they never get the real
+        // database. inMemory: true builds a throwaway one that dies when
+        // the preview closes — so preview data never touches the real app.
+        .modelContainer(for: Reflection.self, inMemory: true)
 }

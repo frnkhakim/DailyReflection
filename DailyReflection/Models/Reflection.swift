@@ -15,7 +15,7 @@ final class Reflection{
     var wasHard: String
     var tomorrow: String
     
-    init(date: Date, wentWell: String, wasHard: String, tomorrow: String) {
+    init(date: Date = .now, wentWell: String = "", wasHard: String = "", tomorrow: String = "") {
         self.date = date
         self.wentWell = wentWell
         self.wasHard = wasHard
