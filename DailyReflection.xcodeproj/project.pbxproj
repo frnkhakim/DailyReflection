@@ -36,6 +36,7 @@
 				App/DailyReflectionApp.swift,
 				Assets.xcassets,
 				Models/Reflection.swift,
+				"Services/Date+Day.swift",
 				Views/ContentView.swift,
 			);
 			target = D6B53D7D3031C2A00006C368 /* DailyReflection */;

@@ -9,8 +9,8 @@ import Foundation
 import SwiftData
 
 @Model
-final class Reflection{
-    var date :Date
+final class Reflection {
+    var date: Date
     var wentWell: String
     var wasHard: String
     var tomorrow: String
