@@ -29,12 +29,29 @@
 		D6B53D953031C2A20006C368 /* DailyReflectionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DailyReflectionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D6B53D803031C2A00006C368 /* DailyReflection */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DailyReflection;
-			sourceTree = "<group>";
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D6B53DBA3031C31D0006C368 /* Exceptions for "DailyReflection" folder in "DailyReflection" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/DailyReflectionApp.swift,
+				Assets.xcassets,
+				Models/Reflection.swift,
+				Views/ContentView.swift,
+			);
+			target = D6B53D7D3031C2A00006C368 /* DailyReflection */;
 		};
+		D6B53DBB3031C31D0006C368 /* Exceptions for "DailyReflection" folder in "DailyReflectionUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/DailyReflectionApp.swift,
+				Assets.xcassets,
+				Views/ContentView.swift,
+			);
+			target = D6B53D943031C2A20006C368 /* DailyReflectionUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
 		D6B53D8E3031C2A20006C368 /* DailyReflectionTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DailyReflectionTests;
@@ -43,6 +60,15 @@
 		D6B53D983031C2A20006C368 /* DailyReflectionUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = DailyReflectionUITests;
+			sourceTree = "<group>";
+		};
+		D6B53DB63031C31C0006C368 /* DailyReflection */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D6B53DBA3031C31D0006C368 /* Exceptions for "DailyReflection" folder in "DailyReflection" target */,
+				D6B53DBB3031C31D0006C368 /* Exceptions for "DailyReflection" folder in "DailyReflectionUITests" target */,
+			);
+			path = DailyReflection;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,7 +101,7 @@
 		D6B53D753031C2A00006C368 = {
 			isa = PBXGroup;
 			children = (
-				D6B53D803031C2A00006C368 /* DailyReflection */,
+				D6B53DB63031C31C0006C368 /* DailyReflection */,
 				D6B53D8E3031C2A20006C368 /* DailyReflectionTests */,
 				D6B53D983031C2A20006C368 /* DailyReflectionUITests */,
 				D6B53D7F3031C2A00006C368 /* Products */,
@@ -106,9 +132,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				D6B53D803031C2A00006C368 /* DailyReflection */,
 			);
 			name = DailyReflection;
 			packageProductDependencies = (
@@ -155,6 +178,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				D6B53D983031C2A20006C368 /* DailyReflectionUITests */,
+				D6B53DB63031C31C0006C368 /* DailyReflection */,
 			);
 			name = DailyReflectionUITests;
 			packageProductDependencies = (
