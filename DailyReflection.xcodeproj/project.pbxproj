@@ -38,6 +38,8 @@
 				Models/Reflection.swift,
 				"Services/Date+Day.swift",
 				Views/ContentView.swift,
+				Views/Shared/PromptCard.swift,
+				Views/Today/TodayView.swift,
 			);
 			target = D6B53D7D3031C2A00006C368 /* DailyReflection */;
 		};
