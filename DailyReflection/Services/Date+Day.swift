@@ -19,4 +19,11 @@ extension Date {
         // Calendar handles daylight saving — don't add 86400 seconds by hand.
         Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
     }
+
+    /// Midnight on the 1st of this month. Used as a grouping key —
+    /// every date in the same month produces the same value.
+    var startOfMonth: Date {
+        let parts = Calendar.current.dateComponents([.year, .month], from: self)
+        return Calendar.current.date(from: parts)!
+    }
 }

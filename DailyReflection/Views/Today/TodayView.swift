@@ -76,6 +76,14 @@ struct TodayView: View {
         }
         .navigationTitle("Today")
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    HistoryView()
+                } label: {
+                    Label("History", systemImage: "clock.arrow.circlepath")
+                }
+            }
+            
             // .keyboard places this bar directly above the keyboard.
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()   // pushes the button to the right
