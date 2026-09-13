@@ -1,5 +1,6 @@
 import Foundation
 import UserNotifications
+import OSLog
 
 /// Schedules the daily reminder. A namespace, not an object.
 enum NotificationService {
@@ -13,8 +14,10 @@ enum NotificationService {
     /// just asked for reminders — not on launch.
     static func requestPermission() async -> Bool {
         do {
-            return try await UNUserNotificationCenter.current()
+            let granted = try await UNUserNotificationCenter.current()
                 .requestAuthorization(options: [.alert, .sound, .badge])
+            Logger.notifications.info("Permission granted: \(granted)")
+            return granted
         } catch {
             // Nothing useful to do here — treat "couldn't ask" as "no".
             return false
@@ -42,6 +45,7 @@ enum NotificationService {
                                             trigger: trigger)
 
         try? await UNUserNotificationCenter.current().add(request)
+        Logger.notifications.info("Reminder scheduled for \(hour):\(minute)")
     }
 
     /// Removes the reminder. Safe to call even if nothing is scheduled.

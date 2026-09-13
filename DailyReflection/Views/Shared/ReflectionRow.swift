@@ -13,13 +13,16 @@ struct ReflectionRow: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
-            .frame(width: 34)
+            // minWidth, not width — a fixed width truncates the day number
+            // for anyone running larger text sizes.
+            .frame(minWidth: 34)
 
             Text(summary)
                 .lineLimit(2)
                 .foregroundStyle(.primary)
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
     }
 
     /// The first prompt the user actually answered — a fallback chain.

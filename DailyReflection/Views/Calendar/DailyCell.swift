@@ -25,5 +25,13 @@ struct DayCell: View {
                     .frame(width: 34, height: 34)
             }
         }
+        // Merge the number and dot into one VoiceOver stop, then describe
+        // what the dot MEANS — a colour conveys nothing on its own.
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(
+            hasEntry
+            ? "Day \(day), reflection written\(isToday ? ", today" : "")"
+            : "Day \(day), no entry\(isToday ? ", today" : "")"
+        )
     }
 }

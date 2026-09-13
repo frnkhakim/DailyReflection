@@ -2,11 +2,10 @@
 //  TodayView.swift
 //  DailyReflection
 //
-//  Created by Frank Hakim on 2026/08/27.
-//
 
 import SwiftUI
 import SwiftData
+import OSLog
 
 struct TodayView: View {
 
@@ -25,7 +24,6 @@ struct TodayView: View {
     }
 
     /// Consecutive days written, counting back from today.
-    /// map(\.date) is key-path shorthand for map { $0.date }.
     private var streak: Int {
         StreakCalculator.currentStreak(from: reflections.map(\.date))
     }
@@ -40,37 +38,12 @@ struct TodayView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-
-                // Only shown once there's a run going — a "0 day streak"
-                // is a discouraging thing to greet someone with.
-                if streak > 0 {
-                    Label("\(streak) day streak", systemImage: "flame.fill")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.orange)
-                }
-
-                // Date on the left, save status on the right. Removing the
-                // Save button means we owe the user a signal instead.
-                HStack {
-                    Text(Date.now.formatted(date: .complete, time: .omitted))
-
-                    Spacer()
-
-                    if todaysEntry == nil {
-                        Text("Not saved")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Label("Saved", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    }
-                }
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 22) {
+                header
 
                 PromptCard(title: "What went well today?",
                            placeholder: "One thing, however small…",
-                           text: $wentWell,        // $ makes the binding
+                           text: $wentWell,
                            field: .wentWell,
                            focus: $focused)
 
@@ -86,11 +59,17 @@ struct TodayView: View {
                            field: .tomorrow,
                            focus: $focused)
             }
-            .padding()
+            .padding(.horizontal, 20)
+            .padding(.top, 4)
+            .padding(.bottom, 40)
         }
+        // A tinted page behind white cards gives the layout depth.
+        .background(Color(.systemGroupedBackground))
+        // Swiping down dismisses the keyboard, so the last box is reachable.
+        .scrollDismissesKeyboard(.interactively)
         .navigationTitle("Today")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     SettingsView()
@@ -98,7 +77,7 @@ struct TodayView: View {
                     Label("Settings", systemImage: "gearshape")
                 }
             }
-            
+
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     HistoryView()
@@ -106,10 +85,10 @@ struct TodayView: View {
                     Label("History", systemImage: "clock.arrow.circlepath")
                 }
             }
-            
+
             // .keyboard places this bar directly above the keyboard.
             ToolbarItemGroup(placement: .keyboard) {
-                Spacer()   // pushes the button to the right
+                Spacer()
                 Button(focused == .tomorrow ? "Done" : "Next") {
                     advanceFocus()
                 }
@@ -119,12 +98,50 @@ struct TodayView: View {
         .onAppear { loadToday() }
 
         // Focus moved — including to nil when the keyboard dismisses.
-        // The user finished a thought, so persist it.
         .onChange(of: focused) { _, _ in save() }
 
         // Backstop: leaving the screen without touching focus.
         .onDisappear { save() }
     }
+
+    // MARK: - Header
+
+    /// Weekday, date, and two status chips.
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(Date.now.formatted(.dateTime.weekday(.wide)))
+                .font(.largeTitle.bold())
+
+            Text(Date.now.formatted(.dateTime.day().month(.wide).year()))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 8) {
+                if streak > 0 {
+                    chip("\(streak) day streak", icon: "flame.fill", tint: .orange)
+                }
+
+                if todaysEntry == nil {
+                    chip("Not saved", icon: "circle.dashed", tint: .secondary)
+                } else {
+                    chip("Saved", icon: "checkmark.circle.fill", tint: .green)
+                }
+            }
+        }
+        .padding(.bottom, 2)
+    }
+
+    /// A small tinted capsule. Colour AND an icon, so it reads without colour.
+    private func chip(_ text: String, icon: String, tint: Color) -> some View {
+        Label(text, systemImage: icon)
+            .font(.footnote.weight(.medium))
+            .foregroundStyle(tint)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(tint.opacity(0.12), in: Capsule())
+    }
+
+    // MARK: - Actions
 
     /// Moves the keyboard to the next prompt, or dismisses it after the last.
     private func advanceFocus() {
@@ -156,10 +173,13 @@ struct TodayView: View {
             entry.wentWell = wentWell
             entry.wasHard  = wasHard
             entry.tomorrow = tomorrow
+            // Log THAT it saved, never WHAT was written — this is a journal.
+            Logger.data.info("Updated today's reflection")
         } else if hasContent {
             context.insert(
                 Reflection(wentWell: wentWell, wasHard: wasHard, tomorrow: tomorrow)
             )
+            Logger.data.info("Created reflection for today")
         }
     }
 }
