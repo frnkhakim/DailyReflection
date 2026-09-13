@@ -1,43 +1,55 @@
-//
-//  DailyReflectionUITests.swift
-//  DailyReflectionUITests
-//
-//  Created by Frank Hakim on 2026/08/16.
-//
+import Testing
+import Foundation
+@testable import DailyReflection
 
-import XCTest
+struct StreakCalculatorTests {
 
-final class DailyReflectionUITests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    /// A date `offset` days before `reference`. Keeps the tests readable.
+    private func day(_ offset: Int, before reference: Date) -> Date {
+        Calendar.current.date(byAdding: .day, value: -offset, to: reference)!
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    @Test func noEntriesMeansNoStreak() {
+        #expect(StreakCalculator.currentStreak(from: [], today: .now) == 0)
     }
 
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // XCUIAutomation Documentation
-        // https://developer.apple.com/documentation/xcuiautomation
+    @Test func writingTodayGivesOne() {
+        let today = Date.now
+        #expect(StreakCalculator.currentStreak(from: [today], today: today) == 1)
     }
 
-    @MainActor
-    func testLaunchPerformance() throws {
-        // This measures how long it takes to launch your application.
-        measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
-        }
+    @Test func threeDaysInARowGivesThree() {
+        let today = Date.now
+        let dates = [day(0, before: today), day(1, before: today), day(2, before: today)]
+        #expect(StreakCalculator.currentStreak(from: dates, today: today) == 3)
+    }
+
+    /// The Duolingo rule: nothing written today yet, but yesterday counts.
+    @Test func todayUnwrittenKeepsTheStreakAlive() {
+        let today = Date.now
+        let dates = [day(1, before: today), day(2, before: today)]
+        #expect(StreakCalculator.currentStreak(from: dates, today: today) == 2)
+    }
+
+    /// Two days missed in a row really does end it.
+    @Test func twoDaysMissedEndsTheStreak() {
+        let today = Date.now
+        #expect(StreakCalculator.currentStreak(from: [day(2, before: today)], today: today) == 0)
+    }
+
+    /// Only the run nearest today counts — older runs are history.
+    @Test func aGapStopsTheCount() {
+        let today = Date.now
+        let dates = [day(0, before: today), day(1, before: today),
+                     day(3, before: today), day(4, before: today)]
+        #expect(StreakCalculator.currentStreak(from: dates, today: today) == 2)
+    }
+
+    /// Editing morning and evening is still one day.
+    @Test func twoEntriesOnOneDayCountOnce() {
+        let today = Date.now
+        let morning = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: today)!
+        let evening = Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: today)!
+        #expect(StreakCalculator.currentStreak(from: [morning, evening], today: today) == 1)
     }
 }

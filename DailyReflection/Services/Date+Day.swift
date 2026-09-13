@@ -26,4 +26,20 @@ extension Date {
         let parts = Calendar.current.dateComponents([.year, .month], from: self)
         return Calendar.current.date(from: parts)!
     }
+    
+    /// Number of days in this month — 28, 29, 30 or 31.
+    /// Calendar knows the leap-year rules. Never work these out yourself.
+    var numberOfDaysInMonth: Int {
+        Calendar.current.range(of: .day, in: .month, for: self)?.count ?? 30
+    }
+    
+    /// Empty cells to draw before the 1st, so dates land in the right column.
+    /// firstWeekday is 1 (Sunday) in the US but 2 (Monday) here and in
+    /// most of Europe — hardcoding Sunday breaks the layout for most users.
+    var leadingBlanks: Int {
+        let calendar = Calendar.current
+        let weekdayOfFirst = calendar.component(.weekday, from: startOfMonth)
+        // +7 then %7 wraps a negative result round instead of going below zero.
+        return (weekdayOfFirst - calendar.firstWeekday + 7) % 7
+    }
 }

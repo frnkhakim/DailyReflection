@@ -30,7 +30,11 @@ struct HistoryView: View {
                         // "September 2026" — localised automatically.
                         Section(month.key.formatted(.dateTime.month(.wide).year())) {
                             ForEach(month.entries) { entry in
-                                ReflectionRow(reflection: entry)
+                                NavigationLink {
+                                    ReflectionDetailView(reflection: entry)
+                                } label: {
+                                    ReflectionRow(reflection: entry)
+                                }
                             }
                             // offsets are relative to THIS section, not the whole query.
                             .onDelete { offsets in
@@ -42,6 +46,16 @@ struct HistoryView: View {
             }
         }
         .navigationTitle("History")
+        
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    MonthGridView()
+                } label: {
+                    Label("Calendar", systemImage: "calendar")
+                }
+            }
+        }
     }
     
     /// Deletes swiped rows. `offsets` index into the section's array,

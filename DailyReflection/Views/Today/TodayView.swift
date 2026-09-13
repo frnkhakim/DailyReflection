@@ -24,6 +24,12 @@ struct TodayView: View {
         return reflections.first { $0.date >= start && $0.date < end }
     }
 
+    /// Consecutive days written, counting back from today.
+    /// map(\.date) is key-path shorthand for map { $0.date }.
+    private var streak: Int {
+        StreakCalculator.currentStreak(from: reflections.map(\.date))
+    }
+
     @State private var wentWell = ""
     @State private var wasHard = ""
     @State private var tomorrow = ""
@@ -35,6 +41,14 @@ struct TodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
+
+                // Only shown once there's a run going — a "0 day streak"
+                // is a discouraging thing to greet someone with.
+                if streak > 0 {
+                    Label("\(streak) day streak", systemImage: "flame.fill")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.orange)
+                }
 
                 // Date on the left, save status on the right. Removing the
                 // Save button means we owe the user a signal instead.
@@ -76,6 +90,15 @@ struct TodayView: View {
         }
         .navigationTitle("Today")
         .toolbar {
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    SettingsView()
+                } label: {
+                    Label("Settings", systemImage: "gearshape")
+                }
+            }
+            
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     HistoryView()
